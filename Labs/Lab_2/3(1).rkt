@@ -1,0 +1,11 @@
+(define (ref xs id)
+  (define (helper xs i)
+    (cond ((null? xs) #f)
+          ((vector? xs) (helper (vector->list xs) i))
+          ((string? xs) (helper (string->list xs) i))
+          ((list? xs) (begin
+                        (if (= id i)
+                            (car xs)
+                            (helper (cdr xs) (+ i 1)))))
+          (else #f)))
+  (helper xs 0))

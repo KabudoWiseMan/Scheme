@@ -1,0 +1,6 @@
+(define (replace pred? proc xs)
+  (if (null? xs)
+      '()
+      (if (pred? (car xs))
+          (cons (proc (car xs)) (replace pred? proc (cdr xs)))
+          (cons (car xs) (replace pred? proc (cdr xs))))))

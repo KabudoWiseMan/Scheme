@@ -1,0 +1,8 @@
+(define (bisection f a b ε)
+  (let* ((c (/ (+ a b) 2)))
+    (cond ((<= (abs (f a)) ε) a) 
+          ((<= (abs (f b)) ε) b) 
+          ((and (<= (abs (- b a)) ε) (<= (abs (f b)) ε)) b)
+          ((and (<= (abs (- b a)) ε) (> (abs (f b)) ε)) a)
+          ((< (* (f a) (f c)) 0) (bisection f a c ε))
+          (else (bisection f c b ε)))))

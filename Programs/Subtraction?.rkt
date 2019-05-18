@@ -1,0 +1,7 @@
+(define (a-b? expr)
+  (and (list? expr)
+       (= (length expr) 3)
+       (eq? (car expr) '-)
+       (or (number? (cadr expr))
+           (symbol? (cadr expr))
+           (list? (cadr expr)))))

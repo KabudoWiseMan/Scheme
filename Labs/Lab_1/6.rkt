@@ -1,0 +1,6 @@
+(define (o . functions)
+  (define (helper functions)
+    (if (not (null? functions))
+        (lambda (x) ((car functions) ((helper (cdr functions)) x)))
+        (lambda (x) x)))
+  (helper functions))

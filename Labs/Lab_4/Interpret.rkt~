@@ -1,0 +1,9 @@
+(define (interpret program stack)
+  (main program 0 stack '() '()))
+
+(define (main vector_words index stack_data return_stack dictionary)
+  (if (= index (vector-length vector_words))
+      stack_data
+      (let* ((element (vector-ref vector_words index)))
+        (cond ((number? element) (main vector_words (+ index 1) (cons element stack_data) return_stack dictionary))))))
+

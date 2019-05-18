@@ -1,0 +1,23 @@
+(define (save-data data path)
+  (let ((file (open-output-file path)))
+    (begin
+      (write data file)
+      (close-output-port file))))
+
+(define (load-data path)
+  (let* ((file (open-input-file path))
+        (result (read file)))
+    (begin
+      (close-input-port file)
+      result)))
+
+(define (count-lines path-to-file)
+  (let ((c #\null))
+    (define (inner file count prev-char)
+      (set! c (read-char file))
+      (cond ((eof-object? c) count)
+            ((and (equal? c #\newline) (equal? prev-char #\newline)) (inner file (+ count 1) c))
+            ((and (equal? c #\newline) (not (equal? prev-char #\newline))) (inner file (+ count 1) c))
+            (else (inner file count c))))
+  (let ((file (open-input-file path-to-file)))
+    (inner file 1 #\null))))

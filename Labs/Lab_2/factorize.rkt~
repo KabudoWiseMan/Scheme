@@ -1,0 +1,100 @@
+;new types
+;
+(define (a2-b2? expr) ;new type a2-b2
+  (and (list? expr)
+       (= (length expr) 3)
+       (eq? (car expr) '-)
+       (list? (cadr expr))
+       (eq? 'expt (car (cadr expr)))
+       (eq? 'expt (car (caddr expr)))
+       (eq? 2 (caddr (cadr expr)))
+       (eq? 2 (caddr (caddr expr)))))
+;
+(define (a3-b3? expr) ;new type a3-b3
+  (and (list? expr)
+       (= (length expr) 3)
+       (eq? (car expr) '-)
+       (list? (cadr expr))
+       (eq? 'expt (car (cadr expr)))
+       (eq? 'expt (car (caddr expr)))
+       (eq? 3 (caddr (cadr expr)))
+       (eq? 3 (caddr (caddr expr)))))
+;
+(define (a3+b3? expr) ;new type a3+b3
+  (and (list? expr)
+       (= (length expr) 3)
+       (eq? (car expr) '+)
+       (list? (cadr expr))
+       (eq? 'expt (car (cadr expr)))
+       (eq? 'expt (car (caddr expr)))
+       (eq? 3 (caddr (cadr expr)))
+       (eq? 3 (caddr (caddr expr)))))
+;
+;program
+;
+(define (factorize expression)
+  (cond ((a2-b2? expression) (append '(*)
+                                     (list (list '-
+                                                 (cadr (cadr expression))
+                                                 (cadr (caddr expression))))
+                                     (list (list '+
+                                                 (cadr (cadr expression))
+                                                 (cadr (caddr expression))))))
+        ((a3-b3? expression) (append '(*)
+                                     (list (list '-
+                                                 (cadr (cadr expression))
+                                                 (cadr (caddr expression))))
+                                     (list (list '+
+                                                 (list 'expt (cadr (cadr expression)) '2)
+                                                 (list '* (cadr (cadr expression)) (cadr (caddr expression)))
+                                                 (list 'expt (cadr (caddr expression)) '2)))))
+        ((a3+b3? expression) (append '(*)
+                                     (list (list '+
+                                                 (cadr (cadr expression))
+                                                 (cadr (caddr expression))))
+                                     (list (list '+
+                                                 (list '-
+                                                       (list 'expt (cadr (cadr expression)) '2)
+                                                       (list '* (cadr (cadr expression)) (cadr (caddr expression))))
+                                                 (list 'expt (cadr (caddr expression)) '2)))))
+        (else #f)))
+;
+;tests
+;
+(load "unit-testing.rkt")
+(define the-tests
+  (list (test (factorize '(- (expt x 2) (expt y 2))) '(* (- x y) (+ x y))) ;test for a2-b2
+        (test (factorize '(- (expt (+ first 1) 2) (expt (- second 1) 2))) '(* (- (+ first 1) (- second 1)) (+ (+ first 1) (- second 1)))) ;test for a2-b2
+        (test (eval (list (list 'lambda 
+                                '(x y) 
+                                (factorize '(- (expt x 2) (expt y 2))))
+                          1 2)
+                    (interaction-environment)) -3) ;test for eval a2-b2
+        (test (factorize '(- (expt x 3) (expt y 3))) '(* (- x y) (+ (expt x 2) (* x y) (expt y 2)))) ;test for a3-b3
+        (test (factorize '(+ (expt x 3) (expt y 3))) '(* (+ x y) (+ (- (expt x 2) (* x y)) (expt y 2)))) ;test for a3+b3
+        (test (eval (list (list 'lambda 
+                                '(x y) 
+                                (factorize '(- (expt x 3) (expt y 3))))
+                          1 2)
+                    (interaction-environment)) -7) ;test for eval a3-b3
+        (test (eval (list (list 'lambda 
+                                '(x y) 
+                                (factorize '(+ (expt x 3) (expt y 3))))
+                          1 2)
+                    (interaction-environment)) 9) ;test for a3+b3
+        (test (factorize '(- (expt x y) (expt y x))) #f) ;test for false x^y-y^x
+        (test (factorize '(- (expt x 4) (expt y 4))) #f) ;test for false a4-b4
+        (test (eval (list (list 'lambda 
+                                '(x y) 
+                                (factorize '(+ (expt x 4) (expt y 4))))
+                          1 2)
+                    (interaction-environment)) #f) ;test for false eval a4+b4
+        (test (factorize '(- (expt x y) (expt y x) (expt xy yx))) #f) ;test for false x^y-y^x-xy^yx
+        (test (factorize '()) #f)
+        (test (factorize '1) #f)
+        (test (factorize '(1)) #f)
+        (test (factorize '#(1 2 3)) #f)
+        (test (factorize #(1 2 3)) #f)
+        (test (factorize "123") #f)))
+;
+(run-tests the-tests)

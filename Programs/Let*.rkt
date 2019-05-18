@@ -1,0 +1,5 @@
+(define (circle r)
+  (let* ((pi (acos -1))
+         (C (* 2 pi r))
+         (S (* pi r r)))
+  (list C S)))

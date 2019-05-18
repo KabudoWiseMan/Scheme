@@ -1,0 +1,6 @@
+(define (my-map proc . xss)
+  (define (helper yss)
+    (if (null? (car yss))
+        '()
+        (cons (apply proc (my-map proc (car yss)) (helper (my-map proc (cdr yss)))))))
+  (helper xss))

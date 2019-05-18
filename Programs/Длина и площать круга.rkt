@@ -1,0 +1,5 @@
+(define pi (acos -1))
+(define (circle r)
+  (define C (* 2 pi r))
+  (define S (* pi r r))
+  (list C S))

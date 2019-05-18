@@ -1,0 +1,11 @@
+(define (my-map proc . xss)
+  (define (one-map proc xs)
+  (if (null? xs)
+      '()
+      (cons (proc (car xs)) (one-map proc (cdr xs)))))
+  (define (helper yss)
+    (if (null? (car yss))
+        '()
+        (cons (apply proc (one-map car yss)) (apply my-map proc (one-map cdr yss)))))
+  (helper xss))
+

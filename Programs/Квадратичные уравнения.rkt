@@ -1,0 +1,7 @@
+(define (sq-solve a b c)
+  (define D (- (* b b) (* 4 a c)))
+  (if (< D 0)
+      (write #f)
+      (if (= D 0)
+          (write (/ (- b) (* 2 a)))
+          (list (/ (- (- b) (sqrt D)) (* 2 a)) (/ (+ (- b) (sqrt D)) (* 2 a))))))
